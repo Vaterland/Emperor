@@ -1,0 +1,15 @@
+requests
+six
+dnspython
+discord.py==1.5.1
+websockets
+aiohttp==3.6.2
+typing-extensions
+idna
+chardet
+attrs
+yarl
+multidict
+async-timeout
+idna
+pillow
