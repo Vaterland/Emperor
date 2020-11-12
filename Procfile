@@ -1,1 +1,1 @@
-worker: python ddddd.py
+worker: python dddd.py
