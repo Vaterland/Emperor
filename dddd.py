@@ -1,27 +1,24 @@
-import os
 import discord
 from discord.ext import commands
-bot = commands.Bot(command_prefix = "!", intents = discord.Intents.all())
+bot = commands.Bot(command_prefix = "=", intents = discord.Intents.all())
 bot.remove_command("help")
-
-@bot.command()
-async def test(ctx):
-  embed = discord.Embed(title='test')
-  await ctx.channel.send(embed=embed)
+from discord.utils import get
+import asyncio
 
 @bot.command()
 async def tes(ctx):
-  embed = discord.Embed(color = 0x002eff, description='test')
+  embed=discord.Embed(description='')
   await ctx.channel.send(embed=embed)
 
 @bot.command()
 async def te(ctx):
-  embed = discord.Embed(color = 0x4b0000, title='Список команд сервера', description='!ban[@user] — Бан пользователя')
-  await ctx.channel.send(embed=embed)
+  await ctx.channel.send('Да сами вы пидорасы гандоны ипаные')
 
-@bot.command()
-async def ktopidoras(ctx):
-    await ctx.channel.send('Максутка')
+@bot.command(pass_context=True)
+async def dr(ctx):
+  embed = discord.Embed()
+  embed.set_image(url='https://i.pinimg.com/originals/45/db/b0/45dbb0725fe78ce1874ece5faf94b38c.jpg')
+  await ctx.channel.send(embed=embed)
 
 @bot.command(pass_context=True)
 async def putin(ctx, arg):
@@ -29,8 +26,12 @@ async def putin(ctx, arg):
 
 @bot.command(pass_context=True)
 @commands.has_permissions(manage_messages = True)
-async def clear(ctx, amount = 100):
-  await ctx.channel.purge(limit = amount)
+async def clear(ctx, amount = 0):
+  await ctx.channel.purge(limit = amount +1)
+  await ctx.channel.send(f'Было удалено {amount +1} сообщений.')
+  await ctx.channel.purge(limit = 1)
+  await asyncio.sleep(3)
+  await ctx.message.delete()
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
@@ -47,10 +48,6 @@ async def kick(ctx, member, *, reason):
   await ctx.channel.send(f'{member} был выгнан с сервера по причине: {reason}')
 
 @bot.command(pass_context=True)
-async def hello(ctx, amount = 1):
-    await ctx.channel.purge(limit = amount)
-
-@bot.command(pass_context=True)
 @commands.has_permissions(ban_members=True)
 async def unban(ctx, member, *, reason):
     await ctx.channel.purge(limit = 1)
@@ -63,12 +60,13 @@ async def unban(ctx, member, *, reason):
 
 @bot.command(pass_context=True)
 async def help(ctx):
-  embed = discord.Embed(title = 'Список всех команд')
-  embed.add_field(name = '!server', value = 'Информация о сервере')
-  embed.add_field(name = '!clear', value = 'Очистка чата')
-  embed.add_field(name = '!kick', value = 'Очистка чата')
-  embed.add_field(name = '!ban', value = 'Бан пользователя')
-  embed.add_field(name = '!unban', value = 'Разбан пользователя')
+  embed = discord.Embed(color = 0x4b0000, title = 'Список всех команд')
+  embed.add_field(name = '=server', value = 'Информация о сервере')
+  embed.add_field(name = '=user', value = 'Информация о пользователе')
+  embed.add_field(name = '=clear', value = 'Очистка чата')
+  embed.add_field(name = '=kick', value = 'Очистка чата')
+  embed.add_field(name = '=ban', value = 'Бан пользователя')
+  embed.add_field(name = '=unban', value = 'Разбан пользователя')
   await ctx.channel.send(embed=embed)
 
 @bot.command(pass_context=True)
@@ -93,9 +91,12 @@ async def server(ctx):
   embed.add_field(name='Текстовых каналов', value=str(len(ctx.guild.text_channels)))
   embed.add_field(name='Голосовых каналов', value=str(len(ctx.guild.voice_channels)))
   embed.add_field(name='Категорий', value=str(len(ctx.guild.categories)))
-  embed.add_field(name='Был создан', value=str(ctx.guild.created_at).split('.')[0])
+  a = str(ctx.guild.created_at).split('.')[0].split()[0].split('-')
+  data = f'{a[2]}.{a[1]}.{a[0]}'
+  embed.add_field(name='Был создан', value=data)
   embed.add_field(name='Ролей', value=str(len(ctx.guild.roles)))
   embed.add_field(name='Пользователей и ботов на сервере', value=str(len(ctx.guild.members)))
+  embed.add_field(name='Забаненых пользователей', value=str(ctx.guild.bans))
   k = 0
   for i in ctx.guild.members:
     if i.bot:
@@ -108,14 +109,31 @@ async def user(ctx, member=None):
   if member is None:
     member = ctx.author
   else:
-    member = ctx.guild.get_member(member.replace("!", "").replace("@","").replace("<","").replace(">",""))
+    member = ctx.guild.get_member(int((member.replace("!", "").replace("@","").replace("<","").replace(">",""))))
   embed = discord.Embed(color = 0x4b0000, title=f'[Информация о пользователе {member}]')
-  embed.add_field(name='Эмодзи сервера', value=str(ctx.member.name))
+  embed.add_field(name='Никнейм пользователя', value=member.name)
+  embed.add_field(name='Тэг пользователя', value=member.discriminator)
+  embed.add_field(name='ID пользователя', value=member.id)
+  embed.add_field(name='Когда присоединился', value=str(member.joined_at).split('.')[0])
+  a = str(member.created_at).split('.')[0].split()[0].split('-')
+  data = f'{a[2]}.{a[1]}.{a[0]}'
+  embed.add_field(name='Дата создания аккаунта', value=data)
+  embed.set_thumbnail(url=member.avatar_url)
   await ctx.channel.send(embed=embed)
+
+@bot.command()
+async def play(ctx):
+  global voice
+  channel = ctx.message.author.voice.channel
+  voice = get(bot.voice_clients, guild = ctx.guild)
+  if voice and voice.is_connected():
+    await voice.move_to(channel)
+  else:
+    voice = channel.connect
+  await ctx.send(f'Бот присоединился к каналу **{channel}**.')
 
 @bot.event
 async def on_ready():
-  await bot.change_presence(status=discord.Status.idle)
+  await bot.change_presence(status=discord.Status.do_not_disturb)
 
-tt = os.environ.get('token')
-bot.run(tt)
+bot.run('NzY3NDMxNzI1OTE5MTA5MTky.X4x0fQ.TgyC-2VX57L9ht8IPf0xuyIZYQo')
