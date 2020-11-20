@@ -145,4 +145,4 @@ async def on_command_error(ctx, error):
 async def on_ready():
   await bot.change_presence(status=discord.Status.do_not_disturb)
 
-bot.run('NzY3NDMxNzI1OTE5MTA5MTky.X4x0fQ.3-8NWJ0-4KhFOb0d9mCeLUgxp9c')
+bot.run('NzY3NDMxNzI1OTE5MTA5MTky.X4x0fQ.Q-yylo8AcFn-zVP74oaPI-w96qQ')
