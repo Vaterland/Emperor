@@ -1,4 +1,3 @@
-import os
 import discord
 from discord.ext import commands
 bot = commands.Bot(command_prefix = "=", intents = discord.Intents.all())
@@ -27,12 +26,17 @@ async def putin(ctx, arg):
 
 @bot.command(pass_context=True)
 @commands.has_permissions(manage_messages = True)
-async def clear(ctx, amount = 0):
+async def clear(ctx, amount = int):
   await ctx.channel.purge(limit = amount +1)
   await ctx.channel.send(f'Было удалено {amount +1} сообщений.')
   await ctx.channel.purge(limit = 1)
   await asyncio.sleep(3)
   await ctx.message.delete()
+
+@clear.error
+async def clear_error(ctx, error):
+  if isinstance(error, commands.MissingRequiredArgument):
+    await ctx.send(f'{ctx.author.name}, обязательно укажите количество удалённых сообщений!')
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
@@ -97,7 +101,7 @@ async def server(ctx):
   embed.add_field(name='Был создан', value=data)
   embed.add_field(name='Ролей', value=str(len(ctx.guild.roles)))
   embed.add_field(name='Пользователей и ботов на сервере', value=str(len(ctx.guild.members)))
-  embed.add_field(name='Забаненых пользователей', value=str(ctx.guild.bans))
+  embed.add_field(name='Забаненых пользователей', value=len(str(ctx.guild.bans)))
   k = 0
   for i in ctx.guild.members:
     if i.bot:
@@ -134,8 +138,11 @@ async def play(ctx):
   await ctx.send(f'Бот присоединился к каналу **{channel}**.')
 
 @bot.event
+async def on_command_error(ctx, error):
+  pass
+
+@bot.event
 async def on_ready():
   await bot.change_presence(status=discord.Status.do_not_disturb)
 
-tt = os.environ.get('token')
-bot.run(tt)
+bot.run('NzY3NDMxNzI1OTE5MTA5MTky.X4x0fQ.3-8NWJ0-4KhFOb0d9mCeLUgxp9c')
