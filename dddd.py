@@ -1,4 +1,3 @@
-import os
 import discord
 from discord.ext import commands
 bot = commands.Bot(command_prefix = "=", intents = discord.Intents.all())
@@ -8,12 +7,8 @@ import asyncio
 
 @bot.command()
 async def tes(ctx):
-  embed=discord.Embed(description='')
+  embed=discord.Embed(description='Кпрочих с \nистрацию\n 23. Запрещена прямая или косвенная провокация на нарушения правил\n23. Запрещена прямая или косвенная провокация на нарушения правил\n23. Запрещена прямая или косвенная провокация на нарушения правил')
   await ctx.channel.send(embed=embed)
-
-@bot.command()
-async def te(ctx):
-  await ctx.channel.send('Да сами вы пидорасы гандоны ипаные')
 
 @bot.command(pass_context=True)
 async def dr(ctx):
@@ -27,17 +22,12 @@ async def putin(ctx, arg):
 
 @bot.command(pass_context=True)
 @commands.has_permissions(manage_messages = True)
-async def clear(ctx, amount = int):
+async def clear(ctx, amount = 0):
   await ctx.channel.purge(limit = amount +1)
   await ctx.channel.send(f'Было удалено {amount +1} сообщений.')
   await ctx.channel.purge(limit = 1)
   await asyncio.sleep(3)
   await ctx.message.delete()
-
-@clear.error
-async def clear_error(ctx, error):
-  if isinstance(error, commands.MissingRequiredArgument):
-    await ctx.send(f'{ctx.author.name}, обязательно укажите количество удалённых сообщений!')
 
 @bot.command()
 @commands.has_permissions(ban_members=True)
@@ -146,5 +136,4 @@ async def on_command_error(ctx, error):
 async def on_ready():
   await bot.change_presence(status=discord.Status.do_not_disturb)
 
-tt = os.environ.get('token')
-bot.run(tt)
+bot.run('NzY3NDMxNzI1OTE5MTA5MTky.X4x0fQ.LmXn-MZxC-jPT7eBoM0HCri_Fb8')
