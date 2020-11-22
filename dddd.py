@@ -1,3 +1,4 @@
+import os
 import discord
 from discord.ext import commands
 bot = commands.Bot(command_prefix = "=", intents = discord.Intents.all())
@@ -136,4 +137,5 @@ async def on_command_error(ctx, error):
 async def on_ready():
   await bot.change_presence(status=discord.Status.do_not_disturb)
 
-bot.run('NzY3NDMxNzI1OTE5MTA5MTky.X4x0fQ.LmXn-MZxC-jPT7eBoM0HCri_Fb8')
+tt = os.environ.get('token')
+bot.run(tt)
